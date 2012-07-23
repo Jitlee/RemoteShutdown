@@ -55,6 +55,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RemoteShutdown.Client%28Udp%29\Core\TcpClient.cs">
+      <Link>Core\TcpClient.cs</Link>
+    </Compile>
     <Compile Include="..\RemoteShutdown.Server\Utilities\MyLogger.cs">
       <Link>Utilities\MyLogger.cs</Link>
     </Compile>
@@ -157,7 +160,6 @@
     </Compile>
     <Compile Include="Core\MainVM.cs" />
     <Compile Include="Core\PowerHelper.cs" />
-    <Compile Include="Core\TcpClient.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

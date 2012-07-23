@@ -18,6 +18,11 @@ namespace RemoteShutdown.Utilities
         /// </summary>
         public static readonly int AutoConnectInterval = 10000;
 
+        /// <summary>
+        /// 客户端向服务器端发送的心跳间隔
+        /// </summary>
+        public static readonly int HeartbeatInterval = 120000;
+
         public static string GetLocalIPAddress()
         {
             var ipAddress = string.Empty;

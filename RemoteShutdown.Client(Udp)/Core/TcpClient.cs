@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using RemoteShutdown.Net;
 using RemoteShutdown.Utilities;
 
@@ -14,11 +15,45 @@ namespace RemoteShutdown.Client.Core
 
         private ILogger _logger = LoggerFactory.GetLogger(typeof(TcpClient).FullName);
 
+        private readonly Timer _heartbeatTimer;
+
+        private byte[] _heartbeatBuffer = new byte[] { 0x00 };
+
+        private bool _isConnected;
+
         public Action<Exception> FaultAction { get; set; }
 
         public Action ClosedAction { get; set; }
 
         public Action<byte[]> ReceivedAction { get; set; }
+
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            private set
+            {
+                _isConnected = value;
+
+                if (value)
+                {
+                    _heartbeatTimer.Change(Common.HeartbeatInterval, Common.HeartbeatInterval);
+                }
+                else
+                {
+                    _heartbeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                }
+            }
+        }
+
+        public TcpClient()
+        {
+            _heartbeatTimer = new Timer(HeartbeatTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void HeartbeatTimerCallback(object state)
+        {
+            Send(1003, _heartbeatBuffer);
+        }
 
         public bool Connect(string ipAddress, int port)
         {
@@ -59,6 +94,8 @@ namespace RemoteShutdown.Client.Core
                     _client.Closed -= Client_Closed;
                     _client.Close();
                     _client = null;
+
+                    IsConnected = false;
                 }
                 catch (SocketException socketException)
                 {
@@ -89,11 +126,13 @@ namespace RemoteShutdown.Client.Core
 
         private void Client_Opened(object sender, EventArgs e)
         {
+            IsConnected = true;
             _client.BeginReceive();
         }
 
         private void Client_Faulted(object sender, EventArgs e)
         {
+            IsConnected = false;
             var error = _client.GetLastError();
             if (null != error && null != FaultAction)
             {
@@ -103,6 +142,7 @@ namespace RemoteShutdown.Client.Core
 
         private void Client_Closed(object sender, EventArgs e)
         {
+            IsConnected = false;
             if (null != ClosedAction)
             {
                 ClosedAction();
