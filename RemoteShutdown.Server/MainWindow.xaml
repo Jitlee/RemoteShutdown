@@ -1,0 +1,129 @@
+﻿<Window x:Class="RemoteShutdown.Server.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:RemoteShutdown.Server.Core"
+        Title="远程关机服务器端" Height="550" Width="300" Icon="/Server;component/Resources/app.ico">
+    <Window.Resources>
+        <core:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border>
+                            <ContentPresenter x:Name="ContentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ContentPresenter" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ContentPresenter" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform X="1" Y="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="0">
+                <StackPanel Orientation="Horizontal">
+                    <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/logoff.png"/>
+                    <TextBlock Text="全部注销"/>
+                </StackPanel>
+            </Button>
+            <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="1">
+                <StackPanel Orientation="Horizontal">
+                    <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/shutdown.png"/>
+                    <TextBlock Text="全部关机"/>
+                </StackPanel>
+            </Button>
+            <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="2">
+                <StackPanel Orientation="Horizontal">
+                    <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/reboot.png"/>
+                    <TextBlock Text="全部重启"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <ListBox
+            Grid.Row="1"
+            ItemsSource="{Binding Items}"
+            SelectedValue="{Binding SelectedClient}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Border"
+                                        BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center" Margin="3">
+                                            <Run FontSize="20" Text="{Binding HostName, Mode=OneWay}"/>
+                                            <LineBreak/>
+                                            <Run FontSize="16" Text="{Binding IPAddress, Mode=OneWay}"/>
+                                        </TextBlock>
+                                        <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}"
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
+                                                CommandParameter="0">
+                                            <Image Source="/Server;component/Resources/logoff.png"/>
+                                        </Button>
+                                        <Button Grid.Column="2" Style="{StaticResource IconButtonStyle}"
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
+                                                CommandParameter="1">
+                                            <Image Source="/Server;component/Resources/shutdown.png"/>
+                                        </Button>
+                                        <Button Grid.Column="3" Style="{StaticResource IconButtonStyle}"
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
+                                                CommandParameter="2">
+                                            <Image Source="/Server;component/Resources/reboot.png"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="AliceBlue"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="DarkSlateBlue"/>
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="AliceBlue"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <TextBlock Text="没有发现一台设备"
+                   Foreground="Silver"
+                   FontSize="24"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="WrapWithOverflow"
+                   Visibility="{Binding Items.Count, Converter={StaticResource IntToVisibilityConverter}}"
+                   Grid.Row="1"/>
+    </Grid>
+</Window>
