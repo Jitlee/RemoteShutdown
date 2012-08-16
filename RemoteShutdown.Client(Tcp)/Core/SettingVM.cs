@@ -20,6 +20,10 @@ namespace RemoteShutdown.Client.Core
 
         private bool _boot;
 
+        private bool _allowControl;
+
+        private bool _allowBroadcast;
+
         private string _serverAddress;
 
         private readonly DelegateCommand _saveCommand;
@@ -62,6 +66,38 @@ namespace RemoteShutdown.Client.Core
             }
         }
 
+        /// <summary>
+        /// 是否接受服务器端控制
+        /// </summary>
+        public bool AllowControl
+        {
+            //get { return Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowControl", 1)) != 0; }
+            //set { RWReg.SetValue(SUB_NAME, "Tcp_Client_AllowControl", value ? 1 : 0); }
+            get { return _allowControl; }
+            set
+            {
+                _allowControl = value;
+                RaisePropertyChanged("AllowControl");
+                _saveCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// 是否接收广播消息
+        /// </summary>
+        public bool AllowBroadcast
+        {
+            //get { return Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", 1)) != 0; }
+            //set { RWReg.SetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", value ? 1 : 0); }
+            get { return _allowBroadcast; }
+            set
+            {
+                _allowBroadcast = value;
+                RaisePropertyChanged("AllowBroadcast");
+                _saveCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public string ServerAddress
         {
             get { return _serverAddress; }
@@ -86,6 +122,10 @@ namespace RemoteShutdown.Client.Core
                 string.Compare(System.Windows.Forms.Application.ExecutablePath,
                     boot, true) == 0;
 
+            _allowControl = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowControl", 1)) != 0;
+
+            _allowBroadcast = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", 1)) != 0;
+
             _serverAddress = (string)RWReg.GetValue(SUB_NAME, "Server_Address", string.Empty);
 
             _saveCommand = new DelegateCommand(Save, CanSave);
@@ -105,6 +145,11 @@ namespace RemoteShutdown.Client.Core
             {
                 RWReg.RemoveKey(BOOT_NAME, "RemoteShutdown_Client");
             }
+
+
+            RWReg.SetValue(SUB_NAME, "Tcp_Client_AllowControl", _allowControl ? 1 : 0);
+
+            RWReg.SetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", _allowBroadcast ? 1 : 0);
 
             if (HasServerAddressChanged())
             {

@@ -6,6 +6,7 @@ using System.Windows;
 using RemoteShutdown.Core;
 using RemoteShutdown.Net;
 using RemoteShutdown.Utilities;
+using RemoteShutdown.Views;
 
 namespace RemoteShutdown.Client.Core
 {
@@ -89,13 +90,30 @@ namespace RemoteShutdown.Client.Core
                 switch (flag)
                 {
                     case 0: // 注销
-                        PowerHelper.Logoff();
+                        if (SettingVM.Instance.AllowControl)
+                        {
+                            PowerHelper.Logoff();
+                        }
                         break;
                     case 1: // 关机
-                        PowerHelper.Shutdown();
+                        if (SettingVM.Instance.AllowControl)
+                        {
+                            PowerHelper.Shutdown();
+                        }
                         break;
                     case 2: // 重启
-                        PowerHelper.Reboot();
+                        if (SettingVM.Instance.AllowControl)
+                        {
+                            PowerHelper.Reboot();
+                        }
+                        break;
+                    case 998:
+                    case 999: // 消息
+                        if (SettingVM.Instance.AllowBroadcast)
+                        {
+                            var msg = Encoding.UTF8.GetString(buffer, 4, buffer.Length - 4);
+                            PopupMessageWindow.Show(msg);
+                        }
                         break;
                 }
             }

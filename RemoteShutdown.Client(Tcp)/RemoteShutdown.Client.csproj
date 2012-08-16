@@ -58,6 +58,10 @@
     <Compile Include="..\RemoteShutdown.Client%28Udp%29\Core\TcpClient.cs">
       <Link>Core\TcpClient.cs</Link>
     </Compile>
+    <Compile Include="..\RemoteShutdown.Client%28Udp%29\Views\PopupMessageWindow.xaml.cs">
+      <Link>Views\PopupMessageWindow.xaml.cs</Link>
+      <DependentUpon>PopupMessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="..\RemoteShutdown.Server\Utilities\MyLogger.cs">
       <Link>Utilities\MyLogger.cs</Link>
     </Compile>
@@ -65,6 +69,11 @@
     <Compile Include="Views\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="..\RemoteShutdown.Client%28Udp%29\Views\PopupMessageWindow.xaml">
+      <Link>Views\PopupMessageWindow.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -32,8 +32,5 @@ namespace RemoteShutdown.Server
             base.OnStateChanged(e);
             this.ShowInTaskbar = WindowState != WindowState.Minimized;
         }
-
-
-
     }
 }

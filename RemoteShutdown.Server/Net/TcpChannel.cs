@@ -9,6 +9,7 @@ namespace RemoteShutdown.Net
 {
     public class TcpChannel : ChannelBase
     {
+        const int BUFFER_SIZE = 1024;
         private TcpClient _client;
 
         private string _hostname;
@@ -54,7 +55,7 @@ namespace RemoteShutdown.Net
 
         protected override void OnBeginReceive()
         {
-            var buffer = new byte[1024];
+            var buffer = new byte[BUFFER_SIZE];
             try
             {
                 var asyncResult = _client.Client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
@@ -127,7 +128,7 @@ namespace RemoteShutdown.Net
         {
             try
             {
-                var buffer = new byte[1024];
+                var buffer = new byte[BUFFER_SIZE];
                 var bufferSize = _client.Client.Receive(buffer);
                 var result = new byte[bufferSize];
                 Buffer.BlockCopy(buffer, 0, result, 0, bufferSize);

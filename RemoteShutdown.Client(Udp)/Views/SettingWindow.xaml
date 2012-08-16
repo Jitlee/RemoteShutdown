@@ -13,7 +13,11 @@
         </Grid.RowDefinitions>
         <GroupBox Header="常规" Margin="8"
                   Padding="5">
-            <CheckBox Content="开启启动" IsChecked="{Binding Boot}"/>
+            <StackPanel>
+                <CheckBox Content="开启启动" IsChecked="{Binding Boot}" Margin="0,5"/>
+                <CheckBox Content="是否接受控制" IsChecked="{Binding AllowControl}" Margin="0,5"/>
+                <CheckBox Content="是否接广播消息" IsChecked="{Binding AllowBroadcast}" Margin="0,5"/>
+            </StackPanel>
         </GroupBox>
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Right"

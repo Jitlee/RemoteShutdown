@@ -8,6 +8,7 @@ using RemoteShutdown.Core;
 using RemoteShutdown.Net;
 using RemoteShutdown.Utilities;
 using System.Timers;
+using RemoteShutdown.Server.Views;
 
 namespace RemoteShutdown.Server.Core
 {
@@ -31,6 +32,10 @@ namespace RemoteShutdown.Server.Core
 
         private readonly DelegateCommand<string> _powerAllTimeCommand;
 
+        private readonly DelegateCommand _sendMessageToCommand;
+
+        private readonly DelegateCommand _sendMessageToAllCommand;
+
         private ClientModel _selectedClient;
 
         #endregion
@@ -44,8 +49,12 @@ namespace RemoteShutdown.Server.Core
         public DelegateCommand<object> PowerCommand { get { return _powerCommand; } }
 
         public DelegateCommand<object> PowerAllCommand { get { return _powerAllCommand; } }
+
         public DelegateCommand<string> PowerAllTimeCommand { get { return _powerAllTimeCommand; } }
 
+        public DelegateCommand SendMessageToCommand { get { return _sendMessageToCommand; } }
+
+        public DelegateCommand SendMessageToAllCommand { get { return _sendMessageToAllCommand; } }
 
         public ClientModel SelectedClient {
             get
@@ -57,6 +66,7 @@ namespace RemoteShutdown.Server.Core
                 _selectedClient = value;
                 RaisePropertyChanged("SelectedClient");
                 _powerCommand.RaiseCanExecuteChanged();
+                _sendMessageToCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -77,6 +87,10 @@ namespace RemoteShutdown.Server.Core
             _powerAllCommand = new DelegateCommand<object>(PowerAll, CanPowerAll);
 
             _powerAllTimeCommand = new DelegateCommand<string>(PowerTimeAll, CanPowerAll);
+
+            _sendMessageToCommand = new DelegateCommand(SendMessageTo, CanSendMessageTo);
+
+            _sendMessageToAllCommand = new DelegateCommand(SendMessageToAll, CanSendMessageToAll);
 
             _tcpServer.ReceivedAction = Received;
 
@@ -120,6 +134,7 @@ namespace RemoteShutdown.Server.Core
 
                         _powerAllCommand.RaiseCanExecuteChanged();
                         _powerAllTimeCommand.RaiseCanExecuteChanged();
+                        _sendMessageToAllCommand.RaiseCanExecuteChanged();
 
                     }));
                 }
@@ -140,6 +155,7 @@ namespace RemoteShutdown.Server.Core
                     _items.Remove(client);
                     _powerAllCommand.RaiseCanExecuteChanged();
                     _powerAllTimeCommand.RaiseCanExecuteChanged();
+                    _sendMessageToAllCommand.RaiseCanExecuteChanged();
                 }));
             }
         }
@@ -220,6 +236,67 @@ namespace RemoteShutdown.Server.Core
 
 
         private bool CanPowerAll()
+        {
+            return null != _items && _items.Count > 0;
+        }
+
+        private void SendMessageTo()
+        {
+            if (null != _selectedClient)
+            {
+                var client = _selectedClient;
+                var sendMessageWindow = new SendMessageWindow();
+                sendMessageWindow.Title = string.Format("发送消息(To: {0})", client.IPAddress);
+                if(sendMessageWindow.ShowDialog() == true)
+                {
+                    var message = sendMessageWindow.MessageTextBox.Text;
+                    var buffer = Encoding.UTF8.GetBytes(message);
+                    var dst = new byte[buffer.Length + 4];
+                    var flag = 998;
+                    SetFlag(dst, flag, 0);
+                    Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
+                    buffer = null;
+                    _tcpServer.SendTo(client.Channel, dst);
+                    dst = null;
+                }
+            }
+        }
+
+        private static void SetFlag(byte[] dst, int flag, int index)
+        {
+            dst[index] = (byte)(flag);
+            dst[index + 1] = (byte)(flag >> 8);
+            dst[index + 2] = (byte)(flag >> 16);
+            dst[index + 3] = (byte)(flag >> 24);
+        }
+
+        private bool CanSendMessageTo()
+        {
+            return null != _selectedClient;
+        }
+
+        private void SendMessageToAll()
+        {
+            var sendMessageWindow = new SendMessageWindow();
+            sendMessageWindow.Title = "发送消息(To: 全部)";
+            if (sendMessageWindow.ShowDialog() == true)
+            {
+                var message = sendMessageWindow.MessageTextBox.Text;
+                var buffer = Encoding.UTF8.GetBytes(message);
+                var dst = new byte[buffer.Length + 4];
+                var flag = 999;
+                SetFlag(dst, flag, 0);
+                Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
+                buffer = null;
+                foreach (var client in _items)
+                {
+                    client.Channel.Send(dst);
+                }
+                dst = null;
+            }
+        }
+
+        private bool CanSendMessageToAll()
         {
             return null != _items && _items.Count > 0;
         }

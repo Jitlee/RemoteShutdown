@@ -59,6 +59,9 @@
       <Link>Utilities\MyLogger.cs</Link>
     </Compile>
     <Compile Include="Core\SettingVM.cs" />
+    <Compile Include="Views\PopupMessageWindow.xaml.cs">
+      <DependentUpon>PopupMessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
@@ -163,6 +166,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\PopupMessageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

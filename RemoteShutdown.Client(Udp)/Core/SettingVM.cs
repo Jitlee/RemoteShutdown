@@ -52,6 +52,24 @@ namespace RemoteShutdown.Client.Core
             }
         }
 
+        /// <summary>
+        /// 是否接受服务器端控制
+        /// </summary>
+        public bool AllowControl
+        {
+            get { return Converter.ToInt(RWReg.GetValue(SUB_NAME, "Udp_Client_AllowControl", 1)) != 0; }
+            set { RWReg.SetValue(SUB_NAME, "Udp_Client_AllowControl", value ? 1 : 0); }
+        }
+
+        /// <summary>
+        /// 是否接收广播消息
+        /// </summary>
+        public bool AllowBroadcast
+        {
+            get { return Converter.ToInt(RWReg.GetValue(SUB_NAME, "Udp_Client_AllowBroadcast", 1)) != 0; }
+            set { RWReg.SetValue(SUB_NAME, "Udp_Client_AllowBroadcast", value ? 1 : 0); }
+        }
+
         #endregion
 
         #region 构造方法
