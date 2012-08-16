@@ -24,6 +24,7 @@ namespace RemoteShutdown.Server
         {
             InitializeComponent();
             this.DataContext = MainVM.Instance;
+            this.txtTime.Text = DateTime.Now.AddHours(1).ToString();
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -31,5 +32,8 @@ namespace RemoteShutdown.Server
             base.OnStateChanged(e);
             this.ShowInTaskbar = WindowState != WindowState.Minimized;
         }
+
+
+
     }
 }

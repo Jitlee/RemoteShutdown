@@ -7,6 +7,7 @@ using System.Windows;
 using RemoteShutdown.Core;
 using RemoteShutdown.Net;
 using RemoteShutdown.Utilities;
+using System.Timers;
 
 namespace RemoteShutdown.Server.Core
 {
@@ -28,6 +29,8 @@ namespace RemoteShutdown.Server.Core
 
         private readonly DelegateCommand<object> _powerAllCommand;
 
+        private readonly DelegateCommand<string> _powerAllTimeCommand;
+
         private ClientModel _selectedClient;
 
         #endregion
@@ -41,6 +44,8 @@ namespace RemoteShutdown.Server.Core
         public DelegateCommand<object> PowerCommand { get { return _powerCommand; } }
 
         public DelegateCommand<object> PowerAllCommand { get { return _powerAllCommand; } }
+        public DelegateCommand<string> PowerAllTimeCommand { get { return _powerAllTimeCommand; } }
+
 
         public ClientModel SelectedClient {
             get
@@ -70,6 +75,8 @@ namespace RemoteShutdown.Server.Core
             _powerCommand = new DelegateCommand<object>(Power, CanPower);
 
             _powerAllCommand = new DelegateCommand<object>(PowerAll, CanPowerAll);
+
+            _powerAllTimeCommand = new DelegateCommand<string>(PowerTimeAll, CanPowerAll);
 
             _tcpServer.ReceivedAction = Received;
 
@@ -112,6 +119,8 @@ namespace RemoteShutdown.Server.Core
                         _items.Add(client);
 
                         _powerAllCommand.RaiseCanExecuteChanged();
+                        _powerAllTimeCommand.RaiseCanExecuteChanged();
+
                     }));
                 }
             }
@@ -129,8 +138,8 @@ namespace RemoteShutdown.Server.Core
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     _items.Remove(client);
-
                     _powerAllCommand.RaiseCanExecuteChanged();
+                    _powerAllTimeCommand.RaiseCanExecuteChanged();
                 }));
             }
         }
@@ -167,6 +176,48 @@ namespace RemoteShutdown.Server.Core
                 }
             }
         }
+
+        private void PowerTimeAll(string dateTime)
+        {
+            try
+            {
+                DateTime temp =DateTime.Parse(dateTime);
+                if (DateTime.Now.CompareTo(temp) > 0)
+                {
+                    MessageBox.Show("您输入的时间不能小于当前时间！");
+                }
+                else
+                {
+                    MessageBox.Show("设置成功，请等待......！");
+                }
+
+                Timer time = new Timer();
+                time.Interval = 60000;
+                time.Enabled = true;
+                time.Elapsed+=new ElapsedEventHandler(
+                    (objec,ee)=>
+                    {
+                        Application.Current.Dispatcher.Invoke(
+                    (Action)delegate
+                {
+
+                    if (DateTime.Now.CompareTo(temp) < 0)
+                    {
+                        PowerAll(1);
+                    }
+
+
+                });
+                
+                });
+                time.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("您输入的时间格式不正确！");
+            }
+        }
+
 
         private bool CanPowerAll()
         {

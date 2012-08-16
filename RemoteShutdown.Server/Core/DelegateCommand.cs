@@ -34,8 +34,7 @@ namespace RemoteShutdown.Core
             _execute = execute;
         }
 
-        public DelegateCommandBase(Action<object> execute,
-                       Predicate<object> canExecute)
+        public DelegateCommandBase(Action<object> execute,Predicate<object> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
