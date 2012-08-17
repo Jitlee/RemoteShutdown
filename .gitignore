@@ -2,5 +2,8 @@
 bin
 obj
 *.suo
+*.pdb
+*.vshost.exe
+*.vshost.exe.manifest
 # mstest test results
 TestResults

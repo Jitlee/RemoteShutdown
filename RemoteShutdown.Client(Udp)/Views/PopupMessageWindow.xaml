@@ -3,16 +3,59 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="服务器消息"
         ShowInTaskbar="False"
-        WindowStyle="ToolWindow"
+        WindowStyle="None"
         ResizeMode="NoResize"
         Topmost="True"
         Height="145"
-        Width="250">
+        Width="250"
+        x:Name="Window"
+        BorderBrush="#b9c9ef"
+		AllowsTransparency="True"
+        Background="#cfdef4" Opacity="0">
+	<Window.Resources>
+		<Storyboard x:Key="ShowStoryboard">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Window">
+				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderThickness)" Storyboard.TargetName="Window">
+				<EasingThicknessKeyFrame KeyTime="0:0:0.5" Value="1"/>
+			</ThicknessAnimationUsingKeyFrames>
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Window">
+				<EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF1F336B"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard Storyboard="{StaticResource ShowStoryboard}"/>
+		</EventTrigger>
+	</Window.Triggers>
     <Grid>
-        <TextBox x:Name="MessageTextBox"
-                 AcceptsTab="True"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap"
-                 AcceptsReturn="True"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding ElementName=Window,Path=Title}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <Button
+            Grid.Column="1"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Margin="5,0"
+            VerticalAlignment="Center"
+            Content="×"
+            Foreground="Red"
+            FontSize="12"
+            Click="Close_Click" Width="20" Height="20"/>
+        <Border
+        	Grid.ColumnSpan="2"
+        	Grid.Row="1" Margin="10,5" Padding="5" BorderThickness="1" BorderBrush="#FFB9C9EF">
+        	<TextBlock
+        		x:Name="MessageTextBox"
+        		TextWrapping="Wrap"/>
+        </Border>
     </Grid>
 </Window>
