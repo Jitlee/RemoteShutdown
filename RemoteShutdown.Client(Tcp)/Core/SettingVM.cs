@@ -20,9 +20,9 @@ namespace RemoteShutdown.Client.Core
 
         private bool _boot;
 
-        private bool _allowControl;
+        private bool _allowControl = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowControl", 1)) != 0;
 
-        private bool _allowBroadcast;
+        private bool _allowBroadcast = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", 1)) != 0;
 
         private string _serverAddress;
 
@@ -164,7 +164,7 @@ namespace RemoteShutdown.Client.Core
 
         private bool CanSave()
         {
-            return HasBootChanged() || HasServerAddressChanged();
+            return HasBootChanged() || HasServerAddressChanged() || HasAllowControlChanged() || HasAllowBroadcastChanged();
         }
 
         private bool HasBootChanged()
@@ -173,6 +173,18 @@ namespace RemoteShutdown.Client.Core
             return (!string.IsNullOrEmpty(boot) &&
                 string.Compare(System.Windows.Forms.Application.ExecutablePath,
                     boot, true) == 0) != _boot;
+        }
+
+        private bool HasAllowControlChanged()
+        {
+            var allowControl = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowControl", 1)) != 0;
+            return allowControl != _allowControl;
+        }
+
+        private bool HasAllowBroadcastChanged()
+        {
+            var allowBroadcast = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", 1)) != 0;
+            return _allowBroadcast != allowBroadcast;
         }
 
         private bool HasServerAddressChanged()
