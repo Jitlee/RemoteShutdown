@@ -26,6 +26,8 @@ namespace RemoteShutdown.Client.Core
 
         private string _serverAddress;
 
+        private string _hostName;
+
         private readonly DelegateCommand _saveCommand;
 
         #endregion
@@ -104,7 +106,24 @@ namespace RemoteShutdown.Client.Core
             set 
             { 
                 _serverAddress = value;
-                RaisePropertyChanged("Server_Address");
+                RaisePropertyChanged("ServerAddress");
+                _saveCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// 客户端名称
+        /// </summary>
+        public string HostName
+        {
+            get
+            {
+                return _hostName;
+            }
+            set
+            {
+                _hostName = value;
+                RaisePropertyChanged("HostName");
                 _saveCommand.RaiseCanExecuteChanged();
             }
         }
@@ -127,6 +146,12 @@ namespace RemoteShutdown.Client.Core
             _allowBroadcast = Converter.ToInt(RWReg.GetValue(SUB_NAME, "Tcp_Client_AllowBroadcast", 1)) != 0;
 
             _serverAddress = (string)RWReg.GetValue(SUB_NAME, "Server_Address", string.Empty);
+
+            _hostName = RWReg.GetValue(SUB_NAME, "Tcp_Client_HostName", string.Empty).ToString();
+            if (string.IsNullOrEmpty(_hostName))
+            {
+                _hostName = Environment.MachineName;
+            }
 
             _saveCommand = new DelegateCommand(Save, CanSave);
         }
@@ -160,11 +185,21 @@ namespace RemoteShutdown.Client.Core
                     MainVM.Instance.Connect();
                 }
             }
+
+            if (HasHostNameChanged())
+            {
+                RWReg.SetValue(SUB_NAME, "Tcp_Client_HostName", _hostName);
+                MainVM.Instance.Send(Constants.MODIFY_HOSTNAME_FLAG, Encoding.UTF8.GetBytes(_hostName));
+            }
         }
 
         private bool CanSave()
         {
-            return HasBootChanged() || HasServerAddressChanged() || HasAllowControlChanged() || HasAllowBroadcastChanged();
+            return HasBootChanged()
+                || HasServerAddressChanged()
+                || HasAllowControlChanged()
+                || HasAllowBroadcastChanged()
+                || HasHostNameChanged();
         }
 
         private bool HasBootChanged()
@@ -191,6 +226,16 @@ namespace RemoteShutdown.Client.Core
         {
             var serverAddress = (string)RWReg.GetValue(SUB_NAME, "Server_Address", string.Empty);
             return string.Compare(serverAddress, _serverAddress, true) != 0;
+        }
+
+        private bool HasHostNameChanged()
+        {
+            var hostName = RWReg.GetValue(SUB_NAME, "Tcp_Client_HostName", string.Empty).ToString();
+            if (string.IsNullOrEmpty(hostName))
+            {
+                hostName = Environment.MachineName;
+            }
+            return string.Compare(hostName, _hostName) != 0;
         }
 
         #endregion

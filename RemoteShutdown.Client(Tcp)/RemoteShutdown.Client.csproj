@@ -62,6 +62,9 @@
       <Link>Views\PopupMessageWindow.xaml.cs</Link>
       <DependentUpon>PopupMessageWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="..\RemoteShutdown.Server\Utilities\Constants.cs">
+      <Link>Utilities\Constants.cs</Link>
+    </Compile>
     <Compile Include="..\RemoteShutdown.Server\Utilities\MyLogger.cs">
       <Link>Utilities\MyLogger.cs</Link>
     </Compile>

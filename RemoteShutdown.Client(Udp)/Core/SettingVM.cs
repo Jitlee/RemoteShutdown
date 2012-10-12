@@ -70,6 +70,28 @@ namespace RemoteShutdown.Client.Core
             set { RWReg.SetValue(SUB_NAME, "Udp_Client_AllowBroadcast", value ? 1 : 0); }
         }
 
+        /// <summary>
+        /// 客户端名称
+        /// </summary>
+        public string HostName
+        {
+            get
+            {
+                var hostName = RWReg.GetValue(SUB_NAME, "Udp_Client_HostName", string.Empty).ToString();
+                if (string.IsNullOrEmpty(hostName))
+                {
+                    hostName = Environment.MachineName;
+                }
+                return hostName;
+            }
+            set
+            {
+                var hostName = string.IsNullOrEmpty(value) ? Environment.MachineName : value;
+                RWReg.SetValue(SUB_NAME, "Udp_Client_HostName", hostName);
+                MainVM.Instance.Send(Constants.MODIFY_HOSTNAME_FLAG, Encoding.UTF8.GetBytes(hostName));
+            }
+        }
+
         #endregion
 
         #region 构造方法

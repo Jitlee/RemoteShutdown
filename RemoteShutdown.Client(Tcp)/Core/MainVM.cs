@@ -102,31 +102,35 @@ namespace RemoteShutdown.Client.Core
                 var flag = BitConverter.ToInt32(buffer, 0);
                 switch (flag)
                 {
-                    case 0: // 注销
+                    case Constants.LOG_OFF_FLAG: // 注销
                         if (SettingVM.Instance.AllowControl)
                         {
                             PowerHelper.Logoff();
                         }
                         break;
-                    case 1: // 关机
+                    case Constants.SHUTDOWN_FLAG: // 关机
                         if (SettingVM.Instance.AllowControl)
                         {
                             PowerHelper.Shutdown();
                         }
                         break;
-                    case 2: // 重启
+                    case Constants.REBOOT_FLAG: // 重启
                         if (SettingVM.Instance.AllowControl)
                         {
                             PowerHelper.Reboot();
                         }
                         break;
-                    case 998:
-                    case 999: // 消息
+                    case Constants.SEND_MESSAGE_TO_FLAG:
+                    case Constants.SEND_MESSAGE_TO_ALL_FLAG: // 消息
                         if (SettingVM.Instance.AllowBroadcast)
                         {
                             var msg = Encoding.UTF8.GetString(buffer, 4, buffer.Length - 4);
                             PopupMessageWindow.Show(msg);
                         }
+                        break;
+                    case Constants.MODIFY_HOSTNAME_FLAG:
+                        var hostname = Encoding.UTF8.GetString(buffer, 4, buffer.Length - 4);
+                        SettingVM.Instance.HostName = hostname;
                         break;
                 }
             }
@@ -143,17 +147,22 @@ namespace RemoteShutdown.Client.Core
             {
                 IsConnected = true;
                 var client = new ClientModel();
-                client.HostName = Environment.MachineName;
+                client.HostName = SettingVM.Instance.HostName;
                 client.IPAddress = Common.GetLocalIPAddress();
                 var xml = SerializerHelper.SerializerObject<ClientModel>(client);
                 var buffer = Encoding.UTF8.GetBytes(xml);
-                var flag = 1001;
+                var flag = Constants.CONNECT_FLAG;
                 _tcpClient.Send(flag, buffer);
             }
             else
             {
                 IsConnected = false;
             }
+        }
+
+        public void Send(int flag, byte[] buffer)
+        {
+            _tcpClient.Send(flag, buffer);
         }
 
         #endregion

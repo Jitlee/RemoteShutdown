@@ -1,0 +1,32 @@
+﻿<Window x:Class="RemoteShutdown.Server.Views.RenameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterScreen"
+        Title="修改名称" Height="300" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox 
+            x:Name="RenameGroupBox"
+            Margin="8"
+            Padding="5">
+            <TextBox x:Name="HostNameTextBox"
+                     AcceptsTab="True"
+                     TextWrapping="Wrap"
+                     TextChanged="HostNameTextBox_TextChanged"
+                     MaxLength="500"/>
+        </GroupBox>
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Margin="0,0,8,5">
+            <Button
+                x:Name="OKButton"
+                IsDefault="True" IsEnabled="False" Content="确定" Height="23" Width="75" Margin="5" Click="OKButton_Click" />
+            <Button IsCancel="True" Content="取消" Height="23" Width="75" Margin="5" />
+        </StackPanel>
+    </Grid>
+</Window>

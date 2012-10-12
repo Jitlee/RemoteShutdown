@@ -53,11 +53,18 @@ namespace RemoteShutdown.Client
 
         private void ShowSettingWindow()
         {
+            Setting();
+        }
+
+        public void Setting()
+        {
             if (null == _settingWindow)
             {
                 _settingWindow = new SettingWindow();
                 _settingWindow.Closed += (obj, args) => { _settingWindow = null; };
                 _settingWindow.Show();
+                _settingWindow.Activate();
+                _settingWindow.Focus();
             }
             else
             {
@@ -112,6 +119,11 @@ namespace RemoteShutdown.Client
                 // First time app is launched
                 app = new App();
                 app.InitializeComponent();
+
+                if (e.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
                 app.Run();
                 return false;
             }
@@ -120,6 +132,11 @@ namespace RemoteShutdown.Client
             {
                 // Subsequent launches
                 base.OnStartupNextInstance(eventArgs);
+
+                if (eventArgs.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
             }
         }
     }

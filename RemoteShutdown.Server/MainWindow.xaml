@@ -93,6 +93,7 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock VerticalAlignment="Center" Margin="3">
                                             <Run FontSize="20" Text="{Binding HostName, Mode=OneWay}"/>
@@ -100,23 +101,32 @@
                                             <Run FontSize="16" Text="{Binding IPAddress, Mode=OneWay}"/>
                                         </TextBlock>
                                         <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}"
+                                                ToolTip="注销"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="0">
                                             <Image Source="/Server;component/Resources/logoff.png"/>
                                         </Button>
                                         <Button Grid.Column="2" Style="{StaticResource IconButtonStyle}"
+                                                ToolTip="关机"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="1">
                                             <Image Source="/Server;component/Resources/shutdown.png"/>
                                         </Button>
                                         <Button Grid.Column="3" Style="{StaticResource IconButtonStyle}"
+                                                ToolTip="重启"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="2">
                                             <Image Source="/Server;component/Resources/reboot.png"/>
                                         </Button>
                                         <Button Grid.Column="4" Style="{StaticResource IconButtonStyle}"
+                                                ToolTip="发送消息"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.SendMessageToCommand}">
                                             <Image Source="/Server;component/Resources/message.png"/>
+                                        </Button>
+                                        <Button Grid.Column="5" Style="{StaticResource IconButtonStyle}"
+                                                ToolTip="修改名称"
+                                                Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.RenameCommand}">
+                                            <Image Source="/Server;component/Resources/rename.png"/>
                                         </Button>
                                     </Grid>
                                 </Border>

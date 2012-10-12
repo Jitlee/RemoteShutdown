@@ -55,6 +55,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RemoteShutdown.Server\Utilities\Constants.cs">
+      <Link>Utilities\Constants.cs</Link>
+    </Compile>
     <Compile Include="..\RemoteShutdown.Server\Utilities\MyLogger.cs">
       <Link>Utilities\MyLogger.cs</Link>
     </Compile>

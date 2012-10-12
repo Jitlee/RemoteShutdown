@@ -6,26 +6,26 @@
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <GroupBox Header="常规" Margin="8"
+    <StackPanel>
+        <GroupBox Header="常规"
+                  Margin="8"
                   Padding="5">
             <StackPanel>
+                <TextBlock Text="客户端名称：" Margin="0,8,0,3"/>
+                <TextBox
+                    Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="5"/>
                 <CheckBox Content="开启启动" IsChecked="{Binding Boot}" Margin="0,5"/>
                 <CheckBox Content="是否接受控制" IsChecked="{Binding AllowControl}" Margin="0,5"/>
                 <CheckBox Content="是否接广播消息" IsChecked="{Binding AllowBroadcast}" Margin="0,5"/>
             </StackPanel>
         </GroupBox>
-        <StackPanel Grid.Row="1"
-                    HorizontalAlignment="Right"
+        <StackPanel HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Margin="0,0,8,5">
             <Button IsDefault="True" Content="确定" Height="23" Width="75" Margin="5" Click="OKButton_Click" />
             <Button IsCancel="True" Content="取消" Height="23" Width="75" Margin="5" Click="OKButton_Click" />
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Window>

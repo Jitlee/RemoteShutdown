@@ -47,15 +47,22 @@ namespace RemoteShutdown.Client
         SettingWindow _settingWindow;
         private void Setting_Click(object sender, EventArgs e)
         {
+            Setting();
+        }
+
+        public void Setting()
+        {
             if (null == _settingWindow)
             {
                 _settingWindow = new SettingWindow();
                 _settingWindow.Closed += (obj, args) => { _settingWindow = null; };
                 _settingWindow.Show();
+                _settingWindow.Activate();
+                _settingWindow.Focus();
             }
             else
             {
-                if(_settingWindow.WindowState == WindowState.Minimized)
+                if (_settingWindow.WindowState == WindowState.Minimized)
                 {
                     _settingWindow.WindowState = WindowState.Normal;
                 }
@@ -104,8 +111,15 @@ namespace RemoteShutdown.Client
             protected override bool OnStartup(Microsoft.VisualBasic.ApplicationServices.StartupEventArgs e)
             {
                 // First time app is launched
+
                 app = new App();
                 app.InitializeComponent();
+
+                if (e.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
+
                 app.Run();
                 return false;
             }
@@ -114,6 +128,11 @@ namespace RemoteShutdown.Client
             {
                 // Subsequent launches
                 base.OnStartupNextInstance(eventArgs);
+
+                if (eventArgs.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
             }
         }
     }

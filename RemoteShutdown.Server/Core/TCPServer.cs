@@ -64,7 +64,18 @@ namespace RemoteShutdown.Server.Core
 
         public void SendTo(IChannel channel, byte[] buffer)
         {
-            channel.Send(buffer);
+            try
+            {
+                channel.Send(buffer);
+            }
+            catch (SocketException socketException)
+            {
+                _logger.Trance("[SendTo] SocketException : {0}", socketException.Message);
+            }
+            catch (Exception exception)
+            {
+                _logger.Debug("[SendTo] Exception : {0}", exception.Message);
+            }
         }
 
         private void Server_Received(object sender, AsyncReceiveEventArgs e)

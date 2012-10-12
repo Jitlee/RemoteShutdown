@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Windows;
 using RemoteShutdown.Core;
 using RemoteShutdown.Net;
-using RemoteShutdown.Utilities;
-using System.Timers;
 using RemoteShutdown.Server.Views;
+using RemoteShutdown.Utilities;
 
 namespace RemoteShutdown.Server.Core
 {
@@ -36,6 +36,8 @@ namespace RemoteShutdown.Server.Core
 
         private readonly DelegateCommand _sendMessageToAllCommand;
 
+        private readonly DelegateCommand _renameCommand;
+
         private ClientModel _selectedClient;
 
         #endregion
@@ -56,6 +58,8 @@ namespace RemoteShutdown.Server.Core
 
         public DelegateCommand SendMessageToAllCommand { get { return _sendMessageToAllCommand; } }
 
+        public DelegateCommand RenameCommand { get { return _renameCommand; } }
+
         public ClientModel SelectedClient {
             get
             {
@@ -67,6 +71,7 @@ namespace RemoteShutdown.Server.Core
                 RaisePropertyChanged("SelectedClient");
                 _powerCommand.RaiseCanExecuteChanged();
                 _sendMessageToCommand.RaiseCanExecuteChanged();
+                _renameCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -92,6 +97,8 @@ namespace RemoteShutdown.Server.Core
 
             _sendMessageToAllCommand = new DelegateCommand(SendMessageToAll, CanSendMessageToAll);
 
+            _renameCommand = new DelegateCommand(Rename, CanRename);
+
             _tcpServer.ReceivedAction = Received;
 
             _tcpServer.DisconnectAction = DisConnected;
@@ -113,8 +120,11 @@ namespace RemoteShutdown.Server.Core
                 var flag = BitConverter.ToInt32(buffer, 0);
                 switch (flag)
                 {
-                    case 1001:  // 连接
+                    case Constants.CONNECT_FLAG:  // 连接
                         Connected(channel, buffer);
+                        break;
+                    case Constants.MODIFY_HOSTNAME_FLAG:  // 修改终端名
+                        ModifyHostName(channel, buffer);
                         break;
                 }
             }
@@ -142,6 +152,26 @@ namespace RemoteShutdown.Server.Core
             catch (Exception exception)
             {
                 _logger.Debug("[Connected] Exception : {0}", exception.Message);
+            }
+        }
+
+        private void ModifyHostName(IChannel channel, byte[] buffer)
+        {
+            try
+            {
+                var hostname = Encoding.UTF8.GetString(buffer, 4, buffer.Length - 4);
+                var client = _items.FirstOrDefault(c => c.Channel == channel);
+                if (null != client)
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        client.HostName = hostname;
+                    }));
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Debug("[ModifyHostName] Exception : {0}", exception.Message);
             }
         }
 
@@ -219,7 +249,7 @@ namespace RemoteShutdown.Server.Core
 
                     if (DateTime.Now.CompareTo(temp) < 0)
                     {
-                        PowerAll(1);
+                        PowerAll(Constants.SHUTDOWN_FLAG);
                     }
 
 
@@ -228,7 +258,7 @@ namespace RemoteShutdown.Server.Core
                 });
                 time.Start();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("您输入的时间格式不正确！");
             }
@@ -252,7 +282,7 @@ namespace RemoteShutdown.Server.Core
                     var message = sendMessageWindow.MessageTextBox.Text;
                     var buffer = Encoding.UTF8.GetBytes(message);
                     var dst = new byte[buffer.Length + 4];
-                    var flag = 998;
+                    var flag = Constants.SEND_MESSAGE_TO_FLAG;
                     SetFlag(dst, flag, 0);
                     Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
                     buffer = null;
@@ -284,7 +314,7 @@ namespace RemoteShutdown.Server.Core
                 var message = sendMessageWindow.MessageTextBox.Text;
                 var buffer = Encoding.UTF8.GetBytes(message);
                 var dst = new byte[buffer.Length + 4];
-                var flag = 999;
+                var flag = Constants.SEND_MESSAGE_TO_ALL_FLAG;
                 SetFlag(dst, flag, 0);
                 Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
                 buffer = null;
@@ -299,6 +329,35 @@ namespace RemoteShutdown.Server.Core
         private bool CanSendMessageToAll()
         {
             return null != _items && _items.Count > 0;
+        }
+
+        private void Rename()
+        {
+            if (null != _selectedClient)
+            {
+                var client = _selectedClient;
+                var renameWindow = new RenameWindow();
+                renameWindow.RenameGroupBox.Header = client.IPAddress;
+                renameWindow.HostNameTextBox.Text = client.HostName;
+                if (renameWindow.ShowDialog() == true)
+                {
+                    var hostname = renameWindow.HostNameTextBox.Text;
+                    var buffer = Encoding.UTF8.GetBytes(hostname);
+                    var dst = new byte[buffer.Length + 4];
+                    var flag = Constants.MODIFY_HOSTNAME_FLAG;
+                    SetFlag(dst, flag, 0);
+                    Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
+                    buffer = null;
+                    _tcpServer.SendTo(client.Channel, dst);
+                    client.HostName = hostname;
+                    dst = null;
+                }
+            }
+        }
+
+        private bool CanRename()
+        {
+            return null != _selectedClient;
         }
 
         #endregion

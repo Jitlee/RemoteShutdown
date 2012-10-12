@@ -15,6 +15,10 @@
         <GroupBox Header="常规" Margin="8"
                   Padding="5">
             <StackPanel>
+                <TextBlock Text="客户端名称：" Margin="0,8,0,3"/>
+                <TextBox
+                    Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="5"/>
                 <CheckBox Content="开启启动" IsChecked="{Binding Boot}" Margin="0,5"/>
                 <CheckBox Content="是否接受控制" IsChecked="{Binding AllowControl}" Margin="0,5"/>
                 <CheckBox Content="是否接广播消息" IsChecked="{Binding AllowBroadcast}" Margin="0,5"/>

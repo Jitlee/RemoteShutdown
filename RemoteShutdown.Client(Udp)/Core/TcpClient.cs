@@ -112,15 +112,26 @@ namespace RemoteShutdown.Client.Core
         {
             if (null != _client)
             {
-                var dst = new byte[buffer.Length + 4];
-                dst[0] = (byte)flag;
-                dst[1] = (byte)(flag >> 8);
-                dst[2] = (byte)(flag >> 16);
-                dst[3] = (byte)(flag >> 24);
-                Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
-                _client.Send(dst);
-                dst = null;
-                buffer = null;
+                try
+                {
+                    var dst = new byte[buffer.Length + 4];
+                    dst[0] = (byte)flag;
+                    dst[1] = (byte)(flag >> 8);
+                    dst[2] = (byte)(flag >> 16);
+                    dst[3] = (byte)(flag >> 24);
+                    Buffer.BlockCopy(buffer, 0, dst, 4, buffer.Length);
+                    _client.Send(dst);
+                    dst = null;
+                    buffer = null;
+                }
+                catch (SocketException socketException)
+                {
+                    _logger.Trance("[Send] SocketException : {0}", socketException.Message);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Debug("[Send] Exception : {0}", exception.Message);
+                }
             }
         }
 
