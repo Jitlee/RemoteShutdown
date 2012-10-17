@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="TitleString">教育云交互平台终端远程控制服务端</sys:String>
+    <sys:String x:Key="AllLogoffString">全部注销</sys:String>
+    <sys:String x:Key="AllShutdownString">全部关机</sys:String>
+    <sys:String x:Key="AllRebootString">全部重启</sys:String>
+    <sys:String x:Key="SendMessageString">发送消息</sys:String>
+    <sys:String x:Key="TimingShutdownString">定时关机</sys:String>
+    <sys:String x:Key="LogoffString">注销</sys:String>
+    <sys:String x:Key="ShutdownString">关机</sys:String>
+    <sys:String x:Key="RebootString">重启</sys:String>
+    <sys:String x:Key="RenameString">修改名称</sys:String>
+    <sys:String x:Key="NoDataString">没有发现一台设备</sys:String>
+    <sys:String x:Key="AllString">全部</sys:String>
+    <sys:String x:Key="ToString">给</sys:String>
+    <sys:String x:Key="SettingString">设置</sys:String>
+    <sys:String x:Key="ExitString">退出</sys:String>
+    <sys:String x:Key="GeneralString">常规</sys:String>
+    <sys:String x:Key="AutoStartString">是否开机启动</sys:String>
+    <sys:String x:Key="OKString">确定</sys:String>
+    <sys:String x:Key="CancelString">取消</sys:String>
+    <sys:String x:Key="AlsoEnterString">你还可以输入{0}字</sys:String>
+    <sys:String x:Key="LanguageString">语言</sys:String>
+    <sys:String x:Key="QueryString">询问</sys:String>
+    <sys:String x:Key="ExcuteAllString">是否确定执行全部{0}命令?</sys:String>
+</ResourceDictionary>

@@ -217,13 +217,15 @@ namespace RemoteShutdown.Net
 
                 OnClosing();
 
-                OnClosed();
+                OnClose();
 
                 if (State != CommunicationState.Closing)
                 {
                     return;
                 }
                 State = CommunicationState.Closed;
+
+                OnClosed();
             }
             catch (Exception ex)
             {

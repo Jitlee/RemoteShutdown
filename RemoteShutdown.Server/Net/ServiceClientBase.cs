@@ -34,6 +34,11 @@ namespace RemoteShutdown.Net
 
         protected override System.IAsyncResult OnBeginOpen(System.AsyncCallback callback, object state)
         {
+            GetLogger().Trance("[OnBeginOpen] Called.");
+            _channel.Opened += OnOpened;
+            _channel.Received += Received;
+            _channel.Closed += OnClosed;
+            _channel.Faulted += OnFaulted;
             return _channel.BeginOpen(callback, state);
         }
 
@@ -44,6 +49,7 @@ namespace RemoteShutdown.Net
 
         protected override void OnEndOpen(System.IAsyncResult result)
         {
+            GetLogger().Trance("[OnEndOpen] OnClose.");
             _channel.EndOpen(result);
         }
 

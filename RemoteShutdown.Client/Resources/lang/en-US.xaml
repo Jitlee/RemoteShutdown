@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="TitleString">Education cloud interaction platform terminal remote control</sys:String>
+    <sys:String x:Key="AllLogoffString">All Logoff</sys:String>
+    <sys:String x:Key="AllShutdownString">All Shutdown</sys:String>
+    <sys:String x:Key="AllRebootString">All Reboot</sys:String>
+    <sys:String x:Key="SendMessageString">Send meesage</sys:String>
+    <sys:String x:Key="TimingShutdownString">Timing shutdown</sys:String>
+    <sys:String x:Key="LogoffString">Logoff</sys:String>
+    <sys:String x:Key="ShutdownString">Shutdown</sys:String>
+    <sys:String x:Key="RebootString">Reboot</sys:String>
+    <sys:String x:Key="RenameString">Rename</sys:String>
+    <sys:String x:Key="NoDataString">Did not find a piece of equipment.</sys:String>
+    <sys:String x:Key="AllString">All</sys:String>
+    <sys:String x:Key="ToString">To</sys:String>
+    <sys:String x:Key="SettingString">Setting</sys:String>
+    <sys:String x:Key="ExitString">Exit</sys:String>
+    <sys:String x:Key="GeneralString">General</sys:String>
+    <sys:String x:Key="AutoStartString">AutoStart</sys:String>
+    <sys:String x:Key="OKString">OK</sys:String>
+    <sys:String x:Key="CancelString">Cancel</sys:String>
+    <sys:String x:Key="AlsoEnterString">You can also enter {0} word</sys:String>
+    <sys:String x:Key="LanguageString">Language</sys:String>
+    <sys:String x:Key="QueryString">Query</sys:String>
+    <sys:String x:Key="ExcuteAllString">Are you sure you excute all {0} command?</sys:String>
+</ResourceDictionary>

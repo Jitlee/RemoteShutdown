@@ -1,4 +1,4 @@
-﻿<Application x:Class="RemoteShutdown.Server.App"
+﻿<Application x:Class="RemoteShutdown.Client.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">

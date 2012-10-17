@@ -1,9 +1,9 @@
 ﻿<Window x:Class="RemoteShutdown.Server.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:core="clr-namespace:RemoteShutdown.Server.Core"
+        xmlns:core="clr-namespace:RemoteShutdown.Core"
         WindowStartupLocation="CenterScreen"
-        Title="教育云交互平台终端远程控制服务端" Height="550" Width="600" Icon="/Server;component/Resources/app.ico">
+        Title="{DynamicResource TitleString}" Height="550" Width="600" Icon="/Server;component/Resources/app.ico">
     <Window.Resources>
         <core:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <Style x:Key="IconButtonStyle" TargetType="Button">
@@ -46,31 +46,31 @@
             <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="0">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/logoff.png"/>
-                    <TextBlock Text="全部注销"/>
+                    <TextBlock Text="{DynamicResource AllLogoffString}"/>
                 </StackPanel>
             </Button>
             <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="1">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/shutdown.png"/>
-                    <TextBlock Text="全部关机"/>
+                    <TextBlock Text="{DynamicResource AllShutdownString}"/>
                 </StackPanel>
             </Button>
             <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllCommand}" CommandParameter="2">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/reboot.png"/>
-                    <TextBlock Text="全部重启"/>
+                    <TextBlock Text="{DynamicResource AllRebootString}"/>
                 </StackPanel>
             </Button>
             <Button Height="23" Width="75" Margin="5" Command="{Binding SendMessageToAllCommand}">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/message.png"/>
-                    <TextBlock Text="发送消息"/>
+                    <TextBlock Text="{DynamicResource SendMessageString}"/>
                 </StackPanel>
             </Button>
             <Button Height="23" Width="75" Margin="5" Command="{Binding PowerAllTimeCommand}" CommandParameter="{Binding ElementName=txtTime,Path=Text}">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="16" Width="16" Margin="1,0" Source="/Server;component/Resources/timer.png"/>
-                    <TextBlock Text="定时关机"/>
+                    <TextBlock Text="{DynamicResource TimingShutdownString}"/>
                 </StackPanel>
             </Button>
             <TextBox Height="23" Name="txtTime" Width="120" Text="18:00" />
@@ -101,30 +101,30 @@
                                             <Run FontSize="16" Text="{Binding IPAddress, Mode=OneWay}"/>
                                         </TextBlock>
                                         <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}"
-                                                ToolTip="注销"
+                                                ToolTip="{DynamicResource LogoffString}"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="0">
                                             <Image Source="/Server;component/Resources/logoff.png"/>
                                         </Button>
                                         <Button Grid.Column="2" Style="{StaticResource IconButtonStyle}"
-                                                ToolTip="关机"
+                                                ToolTip="{DynamicResource ShutdownString}"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="1">
                                             <Image Source="/Server;component/Resources/shutdown.png"/>
                                         </Button>
                                         <Button Grid.Column="3" Style="{StaticResource IconButtonStyle}"
-                                                ToolTip="重启"
+                                                ToolTip="{DynamicResource RebootString}"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.PowerCommand}"
                                                 CommandParameter="2">
                                             <Image Source="/Server;component/Resources/reboot.png"/>
                                         </Button>
                                         <Button Grid.Column="4" Style="{StaticResource IconButtonStyle}"
-                                                ToolTip="发送消息"
+                                                ToolTip="{DynamicResource SendMessageString}"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.SendMessageToCommand}">
                                             <Image Source="/Server;component/Resources/message.png"/>
                                         </Button>
                                         <Button Grid.Column="5" Style="{StaticResource IconButtonStyle}"
-                                                ToolTip="修改名称"
+                                                ToolTip="{DynamicResource RenameString}"
                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox},Path=DataContext.RenameCommand}">
                                             <Image Source="/Server;component/Resources/rename.png"/>
                                         </Button>
@@ -147,7 +147,7 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <TextBlock Text="没有发现一台设备"
+        <TextBlock Text="{DynamicResource NoDataString}"
                    Foreground="Silver"
                    FontSize="24"
                    VerticalAlignment="Center"

@@ -11,6 +11,8 @@ namespace RemoteShutdown.Client.Core
 {
     public class TcpClient
     {
+        private object _lockObject = new object();
+
         private ServiceClient _client = null;
 
         private ILogger _logger = LoggerFactory.GetLogger(typeof(TcpClient).FullName);
@@ -22,6 +24,8 @@ namespace RemoteShutdown.Client.Core
         private bool _isConnected;
 
         public Action<Exception> FaultAction { get; set; }
+
+        public Action OpenedAction { get; set; }
 
         public Action ClosedAction { get; set; }
 
@@ -66,7 +70,8 @@ namespace RemoteShutdown.Client.Core
                 _client.Faulted += Client_Faulted;
                 _client.Received += Client_Receive;
                 _client.Closed += Client_Closed;
-                _client.Open();
+                _client.BeginOpen(Client_BeginOpenCallback, null);
+                //_client.Open();
                 return true;
             }
             catch (SocketException socketException)
@@ -84,26 +89,29 @@ namespace RemoteShutdown.Client.Core
 
         public void Disconnect()
         {
-            if (null != _client)
+            lock (_lockObject)
             {
-                try
+                if (null != _client)
                 {
-                    _client.Opened -= Client_Opened;
-                    _client.Faulted -= Client_Faulted;
-                    _client.Received -= Client_Receive;
-                    _client.Closed -= Client_Closed;
-                    _client.Close();
-                    _client = null;
+                    try
+                    {
+                        _client.Close();
+                        _client.Opened -= Client_Opened;
+                        _client.Faulted -= Client_Faulted;
+                        _client.Received -= Client_Receive;
+                        _client.Closed -= Client_Closed;
+                        _client = null;
 
-                    IsConnected = false;
-                }
-                catch (SocketException socketException)
-                {
-                    _logger.Trance("[Disconnect] SocketException : {0}", socketException.Message);
-                }
-                catch (Exception exception)
-                {
-                    _logger.Debug("[Disconnect] Exception : {0}", exception.Message);
+                        IsConnected = false;
+                    }
+                    catch (SocketException socketException)
+                    {
+                        _logger.Trance("[Disconnect] SocketException : {0}", socketException.Message);
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.Debug("[Disconnect] Exception : {0}", exception.Message);
+                    }
                 }
             }
         }
@@ -135,8 +143,20 @@ namespace RemoteShutdown.Client.Core
             }
         }
 
+        private void Client_BeginOpenCallback(IAsyncResult result)
+        {
+            if (null != _client)
+            {
+                _client.EndOpen(result);
+            }
+        }
+
         private void Client_Opened(object sender, EventArgs e)
         {
+            if (null != OpenedAction)
+            {
+                OpenedAction();
+            }
             IsConnected = true;
             _client.BeginReceive();
         }

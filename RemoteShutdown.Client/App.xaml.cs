@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Microsoft.VisualBasic.ApplicationServices;
 
+using RemoteShutdown.Client.Core;
+using RemoteShutdown.Client.Views;
 using RemoteShutdown.Core;
-using RemoteShutdown.Server.Core;
-using RemoteShutdown.Server.Views;
 
-namespace RemoteShutdown.Server
+namespace RemoteShutdown.Client
 {
     /// <summary>
     /// App.xaml 的交互逻辑
@@ -31,7 +33,7 @@ namespace RemoteShutdown.Server
 
             SettingVM.Instance.PropertyChanged += Instance_PropertyChanged;
 
-            _notifyIcon.Icon = RemoteShutdown.Server.Properties.Resources.app;
+            _notifyIcon.Icon = RemoteShutdown.Client.Properties.Resources.app;
             _notifyIcon.Visible = true;
 
             _setting.Click += Setting_Click;
@@ -47,6 +49,7 @@ namespace RemoteShutdown.Server
             {
                 SettingVM.Instance.Boot = true;
                 SettingVM.Instance.First = false;
+                ShowSettingWindow();
             }
 
             base.OnStartup(e);
@@ -62,7 +65,7 @@ namespace RemoteShutdown.Server
 
         private void UpdateLanguage()
         {
-            _notifyIcon.Text = ResourcesHelper.GetValue("TitleString", "教育云交互平台终端远程控制客户端");
+            _notifyIcon.Text = ResourcesHelper.GetValue("TitleString", "教育云交互平台终端远程控制服务端");
             _setting.Text = ResourcesHelper.GetValue("SettingString", "设置");
             _exit.Text = ResourcesHelper.GetValue("ExitString", "退出");
         }
@@ -70,11 +73,36 @@ namespace RemoteShutdown.Server
         SettingWindow _settingWindow;
         private void Setting_Click(object sender, EventArgs e)
         {
+            ShowSettingWindow();
+        }
+
+        private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (null != MainWindow)
+            {
+                if (MainWindow.WindowState == WindowState.Minimized)
+                {
+                    MainWindow.WindowState = WindowState.Normal;
+                }
+                MainWindow.Activate();
+                MainWindow.Focus();
+            }
+        }
+
+        private void ShowSettingWindow()
+        {
+            Setting();
+        }
+
+        public void Setting()
+        {
             if (null == _settingWindow)
             {
                 _settingWindow = new SettingWindow();
                 _settingWindow.Closed += (obj, args) => { _settingWindow = null; };
                 _settingWindow.Show();
+                _settingWindow.Activate();
+                _settingWindow.Focus();
             }
             else
             {
@@ -90,19 +118,6 @@ namespace RemoteShutdown.Server
         private void Exit_Click(object sender, EventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
-        }
-
-        private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (null != MainWindow)
-            {
-                if (MainWindow.WindowState == WindowState.Minimized)
-                {
-                    MainWindow.WindowState = WindowState.Normal;
-                }
-                MainWindow.Activate();
-                MainWindow.Focus();
-            }
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -142,6 +157,11 @@ namespace RemoteShutdown.Server
                 // First time app is launched
                 app = new App();
                 app.InitializeComponent();
+
+                if (e.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
                 app.Run();
                 return false;
             }
@@ -150,6 +170,11 @@ namespace RemoteShutdown.Server
             {
                 // Subsequent launches
                 base.OnStartupNextInstance(eventArgs);
+
+                if (eventArgs.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
+                {
+                    app.Setting();
+                }
             }
         }
     }

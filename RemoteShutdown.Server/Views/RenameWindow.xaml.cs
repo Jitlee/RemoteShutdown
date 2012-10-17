@@ -27,6 +27,7 @@ namespace RemoteShutdown.Server.Views
         private void RenameWindow_Loaded(object sender, EventArgs e)
         {
             this.HostNameTextBox.SelectAll();
+            this.HostNameTextBox.Focus();
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

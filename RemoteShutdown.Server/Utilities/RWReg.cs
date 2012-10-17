@@ -75,9 +75,15 @@ namespace RemoteShutdown.Utilities
                     {
                         try
                         {
-                            subKey.DeleteValue(keyName);
+                            var key = subKey.OpenSubKey(keyName);
+                            if (null != key)
+                            {
+                                subKey.DeleteValue(keyName);
+                            }
                         }
-                        catch { }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }

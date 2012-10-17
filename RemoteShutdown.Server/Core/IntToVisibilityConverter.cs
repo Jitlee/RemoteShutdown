@@ -6,7 +6,7 @@ using System.Windows.Data;
 using System.Windows;
 using RemoteShutdown.Utilities;
 
-namespace RemoteShutdown.Server.Core
+namespace RemoteShutdown.Core
 {
     public class IntToVisibilityConverter : IValueConverter
     {

@@ -45,7 +45,35 @@ namespace RemoteShutdown.Net
 
         protected override void OnSend(byte[] buffer)
         {
-            _client.Client.Send(buffer);
+            try
+            {
+                if (null != _client && null != _client.Client)
+                {
+                    _client.Client.Send(buffer);
+                }
+                else
+                {
+                    Close();
+                }
+            }
+            catch (SocketException socketException)
+            {
+                GetLogger().Trance("[OnSend] SocketException : {0}", socketException.Message);
+                Close();
+                base.Fault(socketException);
+            }
+            catch (ObjectDisposedException objectDisposedException)
+            {
+                GetLogger().Debug("[OnSend] ObjectDisposedException : {0}", objectDisposedException.Message);
+                Close();
+                base.Fault(objectDisposedException);
+            }
+            catch (Exception exception)
+            {
+                GetLogger().Error("[OnSend] ({0}) Exception : {1}", _ipAddress, exception.Message);
+                Close();
+                base.Fault(exception);
+            }
         }
 
         protected override void OnBeginSend(byte[] buffer)
@@ -58,24 +86,31 @@ namespace RemoteShutdown.Net
             var buffer = new byte[BUFFER_SIZE];
             try
             {
-                var asyncResult = _client.Client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
+                if (null != _client && null != _client.Client)
+                {
+                    var asyncResult = _client.Client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
+                }
+                else
+                {
+                    Close();
+                }
             }
             catch (SocketException socketException)
             {
-                GetLogger().Trance("[BeginReceive] SocketException : {0}", socketException.Message);
-                OnClose();
+                GetLogger().Trance("[OnBeginReceive] SocketException : {0}", socketException.Message);
+                Close();
                 base.Fault(socketException);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
-                GetLogger().Debug("[BeginReceive] ObjectDisposedException : {0}", objectDisposedException.Message);
-                OnClose();
+                GetLogger().Debug("[OnBeginReceive] ObjectDisposedException : {0}", objectDisposedException.Message);
+                Close();
                 base.Fault(objectDisposedException);
             }
             catch (Exception exception)
             {
-                GetLogger().Error("[BeginReceive] ({0}) Exception : {1}", _ipAddress, exception.Message);
-                OnClose();
+                GetLogger().Error("[OnBeginReceive] ({0}) Exception : {1}", _ipAddress, exception.Message);
+                Close();
                 base.Fault(exception);
             }
         }
@@ -107,19 +142,19 @@ namespace RemoteShutdown.Net
             catch (SocketException socketException)
             {
                 GetLogger().Trance("[ReceiveCallback] SocketException : {0}", socketException.Message);
-                OnClose();
+                Close();
                 base.Fault(socketException);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
                 GetLogger().Debug("[ReceiveCallback] ObjectDisposedException : {0}", objectDisposedException.Message);
-                OnClose();
+                Close();
                 base.Fault(objectDisposedException);
             }
             catch (Exception exception)
             {
                 GetLogger().Error("[ReceiveCallback] ({0}) Exception : {1}", _ipAddress, exception.Message);
-                OnClose();
+                Close();
                 base.Fault(exception);
             }
         }
@@ -137,14 +172,14 @@ namespace RemoteShutdown.Net
             catch (ObjectDisposedException objectDisposedException)
             {
                 GetLogger().Debug("[ReceiveCallback] ObjectDisposedException : {0}", objectDisposedException.Message);
-                OnClose();
+                Close();
                 base.Fault(objectDisposedException);
                 return new byte[0];
             }
             catch (Exception exception)
             {
                 GetLogger().Error("[ReceiveCallback] ({0}) Exception : {1}", _ipAddress, exception.Message);
-                OnClose();
+                Close();
                 base.Fault(exception);
                 return new byte[0];
             }
@@ -193,7 +228,26 @@ namespace RemoteShutdown.Net
 
         protected override IAsyncResult OnBeginOpen(AsyncCallback callback, object state)
         {
-            return _client.BeginConnect(_ipAddress, _port, callback, state);
+            try
+            {
+                return _client.BeginConnect(_hostname, _port, callback, state);
+            }
+            catch (SocketException socketException)
+            {
+                GetLogger().Trance("[OnBeginOpen] SocketException : {0}", socketException.Message);
+                Close();
+            }
+            catch (ObjectDisposedException objectDisposedException)
+            {
+                GetLogger().Trance("[OnBeginOpen] ObjectDisposedException : {0}", objectDisposedException.Message);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                GetLogger().Trance("[OnBeginOpen] Exception : {0}", ex.Message);
+                Close();
+            }
+            return null;
         }
 
         protected override IAsyncResult OnBeginClose(AsyncCallback callback, object state)
@@ -203,7 +257,22 @@ namespace RemoteShutdown.Net
 
         protected override void OnEndOpen(IAsyncResult result)
         {
-            _client.EndConnect(result);
+            try
+            {
+                _client.EndConnect(result);
+            }
+            catch (SocketException socketException)
+            {
+                GetLogger().Trance("[OnEndOpen] SocketException : {0}", socketException.Message);
+            }
+            catch (ObjectDisposedException objectDisposedException)
+            {
+                GetLogger().Trance("[OnEndOpen] ObjectDisposedException : {0}", objectDisposedException.Message);
+            }
+            catch (Exception ex)
+            {
+                GetLogger().Trance("[OnEndOpen] Exception : {0}", ex.Message);
+            }
         }
 
         protected override void OnEndClose(IAsyncResult result)

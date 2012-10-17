@@ -52,6 +52,31 @@ namespace RemoteShutdown.Server.Core
             }
         }
 
+        public string Language
+        {
+            get
+            {
+                return ResourcesHelper.ConvertLanguage(
+                    RWReg.GetValue(SUB_NAME, "Server_Language",
+                        System.Globalization.CultureInfo
+                        .InstalledUICulture.EnglishName).ToString());
+            }
+            set
+            {
+                RWReg.SetValue(SUB_NAME, "Server_Language", value);
+                ResourcesHelper.SetLanguage(value);
+                RaisePropertyChanged("Language");
+            }
+        }
+
+        public IEnumerable<object> Languages
+        {
+            get
+            {
+                return ResourcesHelper.GetLanguages();
+            }
+        }
+
         #endregion
 
         #region 构造方法

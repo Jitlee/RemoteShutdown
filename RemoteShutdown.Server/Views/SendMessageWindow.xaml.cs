@@ -21,6 +21,12 @@ namespace RemoteShutdown.Server.Views
         public SendMessageWindow()
         {
             InitializeComponent();
+            this.Loaded += SendMessageWindow_Loaded;
+        }
+
+        private void SendMessageWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.MessageTextBox.Focus();
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

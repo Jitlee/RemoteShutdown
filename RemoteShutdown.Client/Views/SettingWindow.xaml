@@ -1,0 +1,67 @@
+﻿<Window x:Class="RemoteShutdown.Client.Views.SettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="设置"
+        Width="300"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Icon="/Client;component/Resources/app.ico">
+    <StackPanel>
+        <GroupBox Header="常规" Margin="8"
+                  Padding="5">
+            <StackPanel>
+                <TextBlock Text="客户端名称：" Margin="0,8,0,3"/>
+                <TextBox
+                    Text="{Binding HostName, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="5"/>
+                <CheckBox Content="开启启动" IsChecked="{Binding Boot}" Margin="0,5"/>
+                <CheckBox Content="是否接受控制" IsChecked="{Binding AllowControl}" Margin="0,5"/>
+                <CheckBox Content="是否接广播消息" IsChecked="{Binding AllowBroadcast}" Margin="0,5"/>
+            </StackPanel>
+        </GroupBox>
+
+        <RadioButton
+            GroupName="Network"
+            Content="自动获得服务器地址"
+            Margin="18,5"
+            IsChecked="{Binding IsAutoAddress}"/>
+        <Grid>
+            <GroupBox
+                Margin="8"
+                IsEnabled="{Binding IsFixedAddress}"
+                Padding="5">
+                <StackPanel>
+                    <TextBlock Text="服务器地址：" Margin="0,8,0,3"/>
+                    <TextBox x:Name="ServerAddressTextBox" Text="{Binding ServerAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </GroupBox>
+            <Border
+                Background="White"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="18,0,0,0">
+                <RadioButton
+                    IsChecked="{Binding IsFixedAddress}"
+                    GroupName="Network"
+                    Content="使用下面的服务器地址"/>
+            </Border>
+        </Grid>
+        <GroupBox Header="{DynamicResource LanguageString}" Margin="8"
+                  Padding="5">
+            <ComboBox
+                Margin="8"
+                SelectedValue="{Binding Language, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Languages}"
+                DisplayMemberPath="DisplayName"
+                SelectedValuePath="Name"/>
+        </GroupBox>
+        <StackPanel Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Margin="0,0,8,5">
+            <Button Focusable="False" IsDefault="True" Content="确定" Height="23" Width="75" Margin="5" Command="{Binding SaveCommand}" Click="OKButton_Click" />
+            <Button Focusable="False" IsCancel="True" Content="取消" Height="23" Width="75" Margin="5" Click="CancelButton_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

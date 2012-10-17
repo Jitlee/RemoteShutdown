@@ -207,11 +207,11 @@ namespace RemoteShutdown.Server.Core
         private void PowerAll(object parameter)
         {
             var powerType = Converter.ToInt(parameter);
-            var powerText = powerType == 0 ? "注销" : (powerType == 1 ? "关机" : "重启");
+            var powerText = powerType == 0 ? ResourcesHelper.GetValue("LogoffString", "注销") : (powerType == 1 ? ResourcesHelper.GetValue("ShutdownString", "关机") : ResourcesHelper.GetValue("RebootString", "重启"));
             var buffer = BitConverter.GetBytes(powerType);
             if (MessageBox.Show(Application.Current.MainWindow,
-                string.Format("是否确定执行全部{0}命令?", powerText),
-                "询问",
+                string.Format(ResourcesHelper.GetValue("ExcuteAllString", "是否确定执行全部{0}命令?"), powerText),
+                ResourcesHelper.GetValue("QueryString", "询问"),
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question,
                 MessageBoxResult.Yes) == MessageBoxResult.Yes)
@@ -276,7 +276,11 @@ namespace RemoteShutdown.Server.Core
             {
                 var client = _selectedClient;
                 var sendMessageWindow = new SendMessageWindow();
-                sendMessageWindow.Title = string.Format("发送消息(To: {0})", client.IPAddress);
+
+                sendMessageWindow.Title = string.Format("{0}({1}: {2})",
+                    ResourcesHelper.GetValue("SendMessageString", "发送消息"),
+                    ResourcesHelper.GetValue("ToString", "给"),
+                    client.IPAddress);
                 if(sendMessageWindow.ShowDialog() == true)
                 {
                     var message = sendMessageWindow.MessageTextBox.Text;
@@ -308,7 +312,10 @@ namespace RemoteShutdown.Server.Core
         private void SendMessageToAll()
         {
             var sendMessageWindow = new SendMessageWindow();
-            sendMessageWindow.Title = "发送消息(To: 全部)";
+            sendMessageWindow.Title = string.Format("{0}({1}: {2})",
+                ResourcesHelper.GetValue("SendMessageString", "发送消息"),
+                ResourcesHelper.GetValue("ToString", "给"),
+                ResourcesHelper.GetValue("AllString", "全部"));
             if (sendMessageWindow.ShowDialog() == true)
             {
                 var message = sendMessageWindow.MessageTextBox.Text;
