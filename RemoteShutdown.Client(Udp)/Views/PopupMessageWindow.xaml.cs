@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using RemoteShutdown.Core;
 
 namespace RemoteShutdown.Views
 {
@@ -38,7 +39,7 @@ namespace RemoteShutdown.Views
         {
             Application.Current.Dispatcher.Invoke(new Action(() => {
                 var window = new PopupMessageWindow();
-                window.Title = string.Format("服务器消息[{0:yy-M-d HH:mm:ss}]", DateTime.Now);
+                window.Title = string.Format(ResourcesHelper.GetValue("ServerMessageString", "服务器消息[{0:yy-M-d HH:mm:ss}]"), DateTime.Now);
                 window.MessageTextBox.Text = message;
                 window._index = _indexes.Max() + 1;
                 _indexes.Add(window._index);

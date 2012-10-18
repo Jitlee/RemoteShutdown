@@ -78,15 +78,7 @@ namespace RemoteShutdown.Client
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (null != MainWindow)
-            {
-                if (MainWindow.WindowState == WindowState.Minimized)
-                {
-                    MainWindow.WindowState = WindowState.Normal;
-                }
-                MainWindow.Activate();
-                MainWindow.Focus();
-            }
+            Setting();
         }
 
         private void ShowSettingWindow()
@@ -162,6 +154,18 @@ namespace RemoteShutdown.Client
                 {
                     app.Setting();
                 }
+
+                var index = e.CommandLine.IndexOf("/l");
+                if (index < 0)
+                {
+                    index = e.CommandLine.IndexOf("/L");
+                }
+                if (index > -1 && index < e.CommandLine.Count - 1)
+                {
+                    var language = e.CommandLine[index + 1];
+                    SettingVM.Instance.Language = language;
+                }
+
                 app.Run();
                 return false;
             }
@@ -174,6 +178,17 @@ namespace RemoteShutdown.Client
                 if (eventArgs.CommandLine.Contains("/s", StringComparer.CurrentCultureIgnoreCase))
                 {
                     app.Setting();
+                }
+
+                var index = eventArgs.CommandLine.IndexOf("/l");
+                if(index < 0)
+                {
+                    index = eventArgs.CommandLine.IndexOf("/L");
+                }
+                if (index > -1 && index < eventArgs.CommandLine.Count - 1)
+                {
+                    var language = eventArgs.CommandLine[index + 1];
+                    SettingVM.Instance.Language = language;
                 }
             }
         }

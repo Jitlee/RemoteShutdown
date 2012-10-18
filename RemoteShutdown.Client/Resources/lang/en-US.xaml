@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:String x:Key="TitleString">Education cloud interaction platform terminal remote control</sys:String>
+    <sys:String x:Key="ClinetNameString">Client Name:</sys:String>
     <sys:String x:Key="AllLogoffString">All Logoff</sys:String>
     <sys:String x:Key="AllShutdownString">All Shutdown</sys:String>
     <sys:String x:Key="AllRebootString">All Reboot</sys:String>
@@ -18,10 +19,16 @@
     <sys:String x:Key="ExitString">Exit</sys:String>
     <sys:String x:Key="GeneralString">General</sys:String>
     <sys:String x:Key="AutoStartString">AutoStart</sys:String>
+    <sys:String x:Key="AllowControlString">Allow Control</sys:String>
+    <sys:String x:Key="AllowBroadcastString">Allow Broadcast</sys:String>
+    <sys:String x:Key="ObtainAutomaticallyString">Obtain server address automatically</sys:String>
+    <sys:String x:Key="UseFollowAddressString">Use the follow server address:</sys:String>
+    <sys:String x:Key="ServerAddressString">Server:</sys:String>
     <sys:String x:Key="OKString">OK</sys:String>
     <sys:String x:Key="CancelString">Cancel</sys:String>
     <sys:String x:Key="AlsoEnterString">You can also enter {0} word</sys:String>
     <sys:String x:Key="LanguageString">Language</sys:String>
     <sys:String x:Key="QueryString">Query</sys:String>
     <sys:String x:Key="ExcuteAllString">Are you sure you excute all {0} command?</sys:String>
+    <sys:String x:Key="ServerMessageString">Server message[{0:yy-M-d HH:mm:ss}]</sys:String>
 </ResourceDictionary>
